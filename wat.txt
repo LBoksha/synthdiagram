@@ -9,3 +9,7 @@ Doel van dit project:
 		3a. Verbindingen tussen ports moeten verwijderd kunnen worden
 	4. Blokken moeten tekst en editbare tekstvelden kunnen bevatten
 	5. Een JSON exportmogelijkheid
+
+Begin: whoops, ik weet helemaal geen drol meer over HTML. Wat de fuck is HTML 5? Is dat standaard? Zijn features als drag&drop uberhaupt geschikt
+om dingen als het verslepen van SVG-elementen te implementeren?
+Eerst maar eens deze tutorial volgen: https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web#dealing_with_files
