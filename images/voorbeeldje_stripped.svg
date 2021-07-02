@@ -1,26 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <link href="styles/style.css" rel="stylesheet">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-
-    <title>SVG HTML & JavaScript Test</title>
-  </head>
-  <body>
-    <h1>SVG editor thing</h1>
-    <p>Buttons go here I guess</p>
-    <img src="images/test-image.png" alt="Quick sketch of what the page should look like">
-    <p>Some things I'll need:</p>
-    <ul>
-      <li>An embedded SVG</li>
-      <li>A menu on the right-hand side to list blocks</li>
-      <li>I guess scrolling on the canvas is out of scope for now?</li>
-    </ul>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
     <rect
        style="opacity:1;vector-effect:none;fill:#999999;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
@@ -99,7 +77,3 @@
          x="108"
          id="tspan843">3</tspan></text>
 </svg>
-
-  <script src="scripts/main.js"></script>
-  </body>
-</html>
