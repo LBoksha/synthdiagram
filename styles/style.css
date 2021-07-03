@@ -29,3 +29,7 @@ p, li {
   line-height: 1.5;
   letter-spacing: 1px;
 }
+
+.drag_handle {
+  cursor: move;
+}
