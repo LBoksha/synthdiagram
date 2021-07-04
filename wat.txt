@@ -17,3 +17,8 @@ Eerst maar eens deze tutorial volgen: https://developer.mozilla.org/en-US/docs/L
 
 Fijne tutorial: https://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/ <-- Heb wat aanpassingen gemaakt om dit te laten werken voor
 diagram nodes (alleen te draggen door op de titelbalk te klikken en zonder geklooi met regexes)
+
+Punt: form input styling is raar: https://www.456bereastreet.com/lab/styling-form-controls-revisited/text-input-single/
+Je moet inputs expliciet noemen in je CSS om ze te stylen; ze erven de stijl van hun parent NIET over! wtpf.
+Zelfs als je de stijl expliciet geeft hoeft een browser er nog geen gehoor aan te geven, maar gelukkig ondersteunen de meeste
+browsers wel het veranderen tekstgrootte, lettertype en breedte van de input (de enige opties die ik hier nodig heb)
