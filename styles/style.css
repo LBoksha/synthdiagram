@@ -5,7 +5,7 @@ html {
 }
 
 body {
-  width: 1000px;
+  width: 1024px;
   margin: 0 auto;
   background-color: #FFFFF0;
   padding: 0 20px 20px 20px;
@@ -32,4 +32,14 @@ p, li {
 
 .drag_handle {
   cursor: move;
+}
+
+.synth_canvas input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.synth_canvas, .synth_canvas input {
+  font-size: 8px;
+  font-family: 'Lato', sans-serif;
 }

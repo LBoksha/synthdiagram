@@ -24,15 +24,18 @@ function addDragHandlersToSvg(evt) {
   }
 
   function startDrag(evt) {
-    let dragHandle = evt.target.closest('.drag_handle');
-    if (dragHandle) {
-      draggedElement = dragHandle.closest('.draggable');  // A drag_handle must be nested in a draggable
-      let mousePosition = getMousePositionInSvgCoordinates(evt);
-      let draggablePosition = getDraggableGroupPositionInSvgCoordinates(draggedElement);
-      draggedOffsetInSvgCoordinates = {
-        x: draggablePosition.x - mousePosition.x,
-        y: draggablePosition.y - mousePosition.y,
-      };
+    draggedElement = evt.target.closest('.drag_handle').closest('.draggable');  // A drag_handle must be nested in a draggable
+    let mousePosition = getMousePositionInSvgCoordinates(evt);
+    let draggablePosition = getDraggableGroupPositionInSvgCoordinates(draggedElement);
+    draggedOffsetInSvgCoordinates = {
+      x: draggablePosition.x - mousePosition.x,
+      y: draggablePosition.y - mousePosition.y,
+    };
+  }
+
+  function onMouseDown(evt) {
+    if (evt.target.closest('.drag_handle')) {
+      startDrag(evt);
     }
   }
 
@@ -55,7 +58,7 @@ function addDragHandlersToSvg(evt) {
     }
   }
 
-  svg.addEventListener('mousedown', startDrag);
+  svg.addEventListener('mousedown', onMouseDown);
   svg.addEventListener('mousemove', drag);
   svg.addEventListener('mouseup', endDrag);
   svg.addEventListener('mouseleave', endDrag);
