@@ -5,6 +5,7 @@ function addDragHandlersToSvg(evt) {
 
   let draggedElement = null;
   let draggedOffsetInSvgCoordinates = null;
+  let nextId = 0;
 
   function getMousePositionInSvgCoordinates(evt) {
     var svgCtm = svg.getScreenCTM();
@@ -46,7 +47,7 @@ function addDragHandlersToSvg(evt) {
     }
   }
 
-  function drag(evt) {
+  function onMouseMove(evt) {
     if (draggedElement) {
       // Note: draggable elements must ONLY have a translate transform
       evt.preventDefault();
@@ -65,9 +66,43 @@ function addDragHandlersToSvg(evt) {
     }
   }
 
+  function onHtml5Dragover(evt) {
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = "copy";
+  }
+
+  function onHtml5Drop(evt) {
+    evt.preventDefault();
+    let templateId = evt.dataTransfer.getData("text/dragged-template");
+    if (templateId) {
+      let draggedNodeCopy = document.getElementById(templateId).querySelector('.draggable').cloneNode(true);
+      let mousePosition = getMousePositionInSvgCoordinates(evt);
+      draggedNodeCopy.setAttributeNS(null, "transform", "translate(" + (mousePosition.x + 0.5) + "," + (mousePosition.y + 0.5) + ")");
+      draggedNodeCopy.id = "node" + nextId;
+      nextId = nextId + 1;
+      svg.appendChild(draggedNodeCopy);
+    }
+  }
+
   svg.addEventListener('mousedown', onMouseDown);
   svg.addEventListener('click', onClick);
-  svg.addEventListener('mousemove', drag);
+  svg.addEventListener('mousemove', onMouseMove);
   svg.addEventListener('mouseup', endDrag);
   svg.addEventListener('mouseleave', endDrag);
+  svg.addEventListener("dragover", onHtml5Dragover);
+  svg.addEventListener("drop", onHtml5Drop);
 }
+
+function onDragStartNodeTemplate(evt) {
+  evt.dataTransfer.setData("text/dragged-template", evt.target.id);
+  evt.dataTransfer.dropEffect = "copy";
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  let currentId = 0;
+  for (const nodeTemplate of document.querySelectorAll(".node_overview li")) {
+    nodeTemplate.id = "nodeTemplate" + currentId;
+    currentId = currentId + 1;
+    nodeTemplate.addEventListener("dragstart", onDragStartNodeTemplate);
+  }
+});

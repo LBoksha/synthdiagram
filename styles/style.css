@@ -24,7 +24,7 @@ main {
 }
 
 section {
-  flex: 1; /* Why isn't a min-width needed here? */
+  flex: 1;
   border: solid black;
   border-width: 2px 1px 2px 2px;
   overflow: scroll;
@@ -56,6 +56,12 @@ p, li {
 
 .canvas .close_button {
   cursor: pointer;
+}
+
+.node_overview ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 .synth input {

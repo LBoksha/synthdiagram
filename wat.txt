@@ -2,7 +2,7 @@ PoC; kijken hoe makkelijk het is om zelf een simpel diagramming tooltje te maken
 Reden: er zijn diagramming tools beschikbaar, maar vaak duur en die doen vaak veel meer dan ik wil (verwarrend!).
 JointJS lijkt redelijk minimalistisch en ga ik met een andere PoC bekijken.
 Doel van dit project:
-	1. Een simpele on-disk webpagina waarmee je voorgedefinieerde blokken vanuit een menu op een canvas kan draggen
+v	1. Een simpele on-disk webpagina waarmee je voorgedefinieerde blokken vanuit een menu op een canvas kan draggen
 v		1a. Blokken moeten verwijderd kunnen worden
 v	2. Blokken op de canvas moeten versleept kunnen worden
 	3. Blokken moeten 'ports' hebben die op elkaar aangesloten kunnen worden
@@ -22,3 +22,8 @@ Punt: form input styling is raar: https://www.456bereastreet.com/lab/styling-for
 Je moet inputs expliciet noemen in je CSS om ze te stylen; ze erven de stijl van hun parent NIET over! wtpf.
 Zelfs als je de stijl expliciet geeft hoeft een browser er nog geen gehoor aan te geven, maar gelukkig ondersteunen de meeste
 browsers wel het veranderen tekstgrootte, lettertype en breedte van de input (de enige opties die ik hier nodig heb)
+
+Todo's:
+	1. de drop als je een element op de canvas plaatst dumpt 'm met de linkerbovenhoek waar je je muis hebt, maar de preview heeft een offset
+tenopzichte van de cursor. Dat kan mooier.
+	2. Automatische generation van nodes in de template bar?
