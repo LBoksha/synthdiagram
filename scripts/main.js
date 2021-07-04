@@ -34,8 +34,15 @@ function addDragHandlersToSvg(evt) {
   }
 
   function onMouseDown(evt) {
-    if (evt.target.closest('.drag_handle')) {
+    if (evt.button === 0 && evt.target.closest('.drag_handle')) {
       startDrag(evt);
+    }
+  }
+
+  function onClick(evt) {
+    if (evt.button === 0 && evt.target.closest('.close_button')) {
+      svg.removeChild(evt.target.closest('.closeable'));
+      // Once connections are implemented, any connections will also have to be deleted here.
     }
   }
 
@@ -59,8 +66,8 @@ function addDragHandlersToSvg(evt) {
   }
 
   svg.addEventListener('mousedown', onMouseDown);
+  svg.addEventListener('click', onClick);
   svg.addEventListener('mousemove', drag);
   svg.addEventListener('mouseup', endDrag);
   svg.addEventListener('mouseleave', endDrag);
 }
-
