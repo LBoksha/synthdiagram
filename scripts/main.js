@@ -34,7 +34,7 @@ function addDragHandlersToSvg(evt) {
   }
 
   function onMouseDown(evt) {
-    if (evt.button === 0 && evt.target.closest('.drag_handle')) {
+    if (evt.button === 0 && evt.target.closest('.drag_handle') && !evt.target.closest('.disable_dragging')) {
       startDrag(evt);
     }
   }
