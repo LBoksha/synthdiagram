@@ -5,16 +5,36 @@ html {
 }
 
 body {
-  width: 1024px;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
   margin: 0 auto;
   background-color: #FFFFF0;
-  padding: 0 20px 20px 20px;
-  border: 5px solid black;
 }
 
-img {
-  display: block;
-  margin: 0 auto;
+header nav {
+  flex: 0 0;
+}
+
+main {
+  flex: 1 1;
+  min-height: 0;
+  display: flex;
+}
+
+section {
+  flex: 1; /* Why isn't a min-width needed here? */
+  border: solid black;
+  border-width: 2px 1px 2px 2px;
+  overflow: scroll;
+}
+
+aside {
+  flex: 0 0 160px;
+  border: solid black;
+  border-width: 2px 2px 2px 1px;
+  overflow-y: scroll;
 }
 
 h1 {
@@ -30,20 +50,20 @@ p, li {
   letter-spacing: 1px;
 }
 
-.drag_handle {
+.canvas .drag_handle {
   cursor: move;
 }
 
-.close_button {
+.canvas .close_button {
   cursor: pointer;
 }
 
-.synth_canvas input {
+.synth input {
   width: 100%;
   box-sizing: border-box;
 }
 
-.synth_canvas, .synth_canvas input {
+.synth, .synth input {
   font-size: 8px;
   font-family: 'Lato', sans-serif;
 }
