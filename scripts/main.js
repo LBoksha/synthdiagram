@@ -40,17 +40,26 @@ function addDragHandlersToSvg(evt) {
   }
 
   function makeNewConnection(connectionId, sourcePortSelector, targetPortSelector) {
-    let newConnection = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    let newConnection = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     newConnection.setAttribute('id', connectionId);
-    newConnection.setAttribute('data-source', sourcePortSelector);
-    newConnection.setAttribute('data-target', targetPortSelector);
-    newConnection.setAttribute('style', 'fill:none;stroke:black;stroke-width:1');
+    newConnection.dataset.source = sourcePortSelector;
+    newConnection.dataset.target = targetPortSelector;
+    newConnection.classList.add('connection');
+    let newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    newConnection.appendChild(newPath);
     svg.insertBefore(newConnection, svg.firstChild);
     if (targetPortSelector !== '#dragged_port') {  // This is a real connection
-      let sourcePort = document.querySelector(newConnection.getAttribute('data-source'));
+      let sourcePort = document.querySelector(sourcePortSelector);
       addNameToSetAttribute(sourcePort, 'data-connections', connectionId);
-      let targetPort = document.querySelector(newConnection.getAttribute('data-target'));
+      let targetPort = document.querySelector(targetPortSelector);
       addNameToSetAttribute(targetPort, 'data-connections', connectionId);
+      newConnection.appendChild(newPath.cloneNode(false));
+      newPath.setAttribute('style', 'stroke-opacity:0;stroke-width:10');  // See-through element to make hovering easier
+      let newCloseButton = newConnection.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
+      newCloseButton.appendChild(document.createTextNode('❌'));
+      newCloseButton.classList.add('close_button');
+      newConnection.classList.add('live_connection');
+      newConnection.classList.add('closeable');
     }
     return newConnection;
   }
@@ -77,10 +86,16 @@ function addDragHandlersToSvg(evt) {
     let targetPort = document.querySelector(connection.getAttribute('data-target'));
     let targetPosition = convertToSvgCoordinates(Number(targetPort.getAttribute('cx')), Number(targetPort.getAttribute('cy')), targetPort.getCTM().inverse());
     let targetDx = Number(targetPort.getAttribute('data-dx'));
-    connection.setAttribute('d', 'M '+ sourcePosition.x + ',' + sourcePosition.y + ' C '
-      + (sourcePosition.x + sourceDx) + ',' + sourcePosition.y + ' '
-      + (targetPosition.x + targetDx) + ',' + targetPosition.y + ' '
-      + targetPosition.x + ',' + targetPosition.y);
+    for (const pathElement of connection.querySelectorAll('path')) {
+      pathElement.setAttribute('d', 'M '+ sourcePosition.x + ',' + sourcePosition.y + ' C '
+        + (sourcePosition.x + sourceDx) + ',' + sourcePosition.y + ' '
+        + (targetPosition.x + targetDx) + ',' + targetPosition.y + ' '
+        + targetPosition.x + ',' + targetPosition.y);
+    }
+    for (const closeButton of connection.querySelectorAll('.close_button')) {
+      closeButton.setAttribute('x', 0.5*sourcePosition.x + 0.5*targetPosition.x + 0.375*sourceDx + 0.375*targetDx);
+      closeButton.setAttribute('y', 0.5*sourcePosition.y + 0.5*targetPosition.y + 5);
+    }
   }
 
   function startConnectionDrag(evt) {
@@ -99,11 +114,17 @@ function addDragHandlersToSvg(evt) {
 
   function onClick(evt) {
     if (evt.button === 0 && evt.target.closest('.close_button')) {
-      let closedNode = svg.removeChild(evt.target.closest('.closeable'));
-      for (const port of closedNode.querySelectorAll(".input_port, .output_port")) {
-        let portConnectionIds = port.getAttribute('data-connections') ? port.getAttribute('data-connections').split(',') : [];
-        for (const connectionId of portConnectionIds) {
-          deleteConnection(connectionId);
+      let closedElement = evt.target.closest('.closeable');
+      if (closedElement && closedElement.classList.contains('connection')) {
+        deleteConnection(closedElement.id);
+      }
+      else if (closedElement) {
+        svg.removeChild(closedElement);
+        for (const port of closedElement.querySelectorAll(".input_port, .output_port")) {
+          let portConnectionIds = port.getAttribute('data-connections') ? port.getAttribute('data-connections').split(',') : [];
+          for (const connectionId of portConnectionIds) {
+            deleteConnection(connectionId);
+          }
         }
       }
     }

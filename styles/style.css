@@ -64,6 +64,23 @@ p, li {
   padding: 0;
 }
 
+.synth text {
+  fill:#000000;
+}
+
+.synth .close_button {
+  text-anchor: middle;
+  font-size: 14px;
+}
+
+.connection .close_button {
+  display: none;
+}
+
+.connection:hover .close_button {
+  display: unset;
+}
+
 .synth input {
   width: 100%;
   box-sizing: border-box;
@@ -72,4 +89,14 @@ p, li {
 .synth, .synth input {
   font-size: 8px;
   font-family: 'Lato', sans-serif;
+}
+
+.connection path {
+  stroke-width: 1;
+  stroke: black;
+  fill: none;
+}
+
+.live_connection:hover path {
+  stroke-width: 3;
 }

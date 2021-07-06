@@ -5,8 +5,8 @@ Doel van dit project:
 v	1. Een simpele on-disk webpagina waarmee je voorgedefinieerde blokken vanuit een menu op een canvas kan draggen
 v		1a. Blokken moeten verwijderd kunnen worden
 v	2. Blokken op de canvas moeten versleept kunnen worden
-	3. Blokken moeten 'ports' hebben die op elkaar aangesloten kunnen worden
-		3a. Verbindingen tussen ports moeten verwijderd kunnen worden
+v	3. Blokken moeten 'ports' hebben die op elkaar aangesloten kunnen worden
+v		3a. Verbindingen tussen ports moeten verwijderd kunnen worden
 v	4. Blokken moeten tekst en editbare tekstvelden kunnen bevatten
 	5. Een JSON exportmogelijkheid
 
