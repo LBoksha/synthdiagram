@@ -7,39 +7,18 @@ function addDragHandlersToSvg(evt) {
   let draggedConnection = null;
   let draggedTargetPort = null;
 
-  function getMousePositionInSvgCoordinates(evt) {
-    var svgCtm = svg.getScreenCTM();
-    return {
-      x: (evt.clientX - svgCtm.e)/svgCtm.a,
-      y: (evt.clientY - svgCtm.f)/svgCtm.d,
-    };
+  function convertToSvgCoordinates(coordX, coordY, ctm) {
+    return {x: (coordX - ctm.e)/ctm.a, y: (coordY - ctm.f)/ctm.d};
   }
 
-  function getDraggableGroupPositionInSvgCoordinates(draggable) {  // This could also just use draggable.getCTM().e and draggable.getCTM().f directly without transformations
-    let svgCtm = svg.getScreenCTM();
-    let draggableCtm = draggable.getScreenCTM();
-    return {
-      x: (draggableCtm.e - svgCtm.e)/svgCtm.a,
-      y: (draggableCtm.f - svgCtm.f)/svgCtm.d,
-    }
-  }
-  
-  function getPortPositionInSvgCoordinates(port) {
-    let ctm = port.getCTM();
-    return {
-      x: ctm.a*Number(port.getAttribute('cx')) + ctm.e,
-      y: ctm.d*Number(port.getAttribute('cy')) + ctm.f,
-    }
-  }
-  
   function getPortSelector(port) {
     return '#' + port.closest('.draggable').id + ' .' + port.getAttribute('data-port');
   }
 
   function startDrag(evt) {
     draggedElement = evt.target.closest('.drag_handle').closest('.draggable');  // A drag_handle must be nested in a draggable
-    let mousePosition = getMousePositionInSvgCoordinates(evt);
-    let draggablePosition = getDraggableGroupPositionInSvgCoordinates(draggedElement);
+    let mousePosition = convertToSvgCoordinates(evt.clientX, evt.clientY, svg.getScreenCTM());
+    let draggablePosition = {x: draggedElement.getCTM().e, y: draggedElement.getCTM().f};
     draggedOffsetInSvgCoordinates = {
       x: draggablePosition.x - mousePosition.x,
       y: draggablePosition.y - mousePosition.y,
@@ -93,10 +72,10 @@ function addDragHandlersToSvg(evt) {
 
   function updateConnectionPath(connection) {
     let sourcePort = document.querySelector(connection.getAttribute('data-source'));
-    let sourcePosition = getPortPositionInSvgCoordinates(sourcePort);
+    let sourcePosition = convertToSvgCoordinates(Number(sourcePort.getAttribute('cx')), Number(sourcePort.getAttribute('cy')), sourcePort.getCTM().inverse());
     let sourceDx = Number(sourcePort.getAttribute('data-dx'));
     let targetPort = document.querySelector(connection.getAttribute('data-target'));
-    let targetPosition = getPortPositionInSvgCoordinates(targetPort);
+    let targetPosition = convertToSvgCoordinates(Number(targetPort.getAttribute('cx')), Number(targetPort.getAttribute('cy')), targetPort.getCTM().inverse());
     let targetDx = Number(targetPort.getAttribute('data-dx'));
     connection.setAttribute('d', 'M '+ sourcePosition.x + ',' + sourcePosition.y + ' C '
       + (sourcePosition.x + sourceDx) + ',' + sourcePosition.y + ' '
@@ -136,7 +115,7 @@ function addDragHandlersToSvg(evt) {
   }
 
   function onMouseMove(evt) {
-    let mousePosition = getMousePositionInSvgCoordinates(evt);
+    let mousePosition = convertToSvgCoordinates(evt.clientX, evt.clientY, svg.getScreenCTM());
     if (draggedElement) {
       evt.preventDefault();
       let newPosition = {
@@ -188,7 +167,7 @@ function addDragHandlersToSvg(evt) {
     let templateId = evt.dataTransfer.getData("text/dragged-template");
     if (templateId) {
       let draggedNodeCopy = document.getElementById(templateId).querySelector('.draggable').cloneNode(true);
-      let mousePosition = getMousePositionInSvgCoordinates(evt);
+      let mousePosition = convertToSvgCoordinates(evt.clientX, evt.clientY, svg.getScreenCTM());
       draggedNodeCopy.setAttributeNS(null, "transform", "translate(" + (mousePosition.x + 0.5) + "," + (mousePosition.y + 0.5) + ")");
       draggedNodeCopy.id = "node" + (nextId++);
       svg.appendChild(draggedNodeCopy);
