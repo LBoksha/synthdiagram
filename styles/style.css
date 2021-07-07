@@ -67,11 +67,11 @@ section.json_export.visible {
   box-sizing: border-box;
 }
 
-.canvas .drag_handle {
+.diagram .drag_handle {
   cursor: move;
 }
 
-.canvas .close_button {
+.diagram .close_button {
   cursor: pointer;
 }
 
