@@ -1,5 +1,5 @@
-function addDragHandlersToSvg(evt) {
-  let svg = evt.target;
+window.addEventListener('DOMContentLoaded', function addHandlers() {
+  let svg = document.querySelector('.canvas');
 
   let draggedElement = null;
   let draggedOffsetInSvgCoordinates = null;
@@ -117,11 +117,10 @@ function addDragHandlersToSvg(evt) {
       let closedElement = evt.target.closest('.closeable');
       if (closedElement && closedElement.classList.contains('connection')) {
         deleteConnection(closedElement.id);
-      }
-      else if (closedElement) {
+      } else if (closedElement) {
         svg.removeChild(closedElement);
         for (const port of closedElement.querySelectorAll(".input_port, .output_port")) {
-          let portConnectionIds = port.getAttribute('data-connections') ? port.getAttribute('data-connections').split(',') : [];
+          let portConnectionIds = port.dataset.connections ? port.dataset.connections.split(',') : [];
           for (const connectionId of portConnectionIds) {
             deleteConnection(connectionId);
           }
@@ -135,28 +134,27 @@ function addDragHandlersToSvg(evt) {
       || (sourcePort.classList.contains('output_port') && targetPort.classList.contains('input_port'));
   }
 
+  function setNodePosition(node, newPositionX, newPositionY) {
+    node.setAttributeNS(null, "transform", "translate(" + newPositionX + "," + newPositionY + ")");
+    for (const port of node.querySelectorAll(".input_port, .output_port")) {
+      let portConnectionIds = port.dataset.connections ? port.dataset.connections.split(',') : [];
+      for (const connectionId of portConnectionIds) {
+        updateConnectionPath(document.getElementById(connectionId));
+      }
+    }
+  }
+
   function onMouseMove(evt) {
     let mousePosition = convertToSvgCoordinates(evt.clientX, evt.clientY, svg.getScreenCTM());
     if (draggedElement) {
       evt.preventDefault();
-      let newPosition = {
-        x: mousePosition.x + draggedOffsetInSvgCoordinates.x,
-        y: mousePosition.y + draggedOffsetInSvgCoordinates.y,
-      };
-      // Note: draggable elements must ONLY have a translate transform
-      draggedElement.setAttributeNS(null, "transform", "translate(" + newPosition.x + "," + newPosition.y + ")");
-      for (const port of draggedElement.querySelectorAll(".input_port, .output_port")) {
-        let portConnectionIds = port.getAttribute('data-connections') ? port.getAttribute('data-connections').split(',') : [];
-        for (const connectionId of portConnectionIds) {
-          updateConnectionPath(document.getElementById(connectionId));
-        }
-      }
+      setNodePosition(draggedElement, mousePosition.x + draggedOffsetInSvgCoordinates.x, mousePosition.y + draggedOffsetInSvgCoordinates.y);
     } else if (draggedConnection) {
       evt.preventDefault();
       if (portsAreCompatible(document.querySelector(draggedConnection.getAttribute('data-source')), evt.target)) {
-        draggedConnection.setAttribute('data-target', getPortSelector(evt.target));
+        draggedConnection.dataset.target = getPortSelector(evt.target);
       } else {
-        draggedConnection.setAttribute('data-target', '#dragged_port');
+        draggedConnection.dataset.target = '#dragged_port';
         draggedTargetPort.setAttribute('cx', mousePosition.x);
         draggedTargetPort.setAttribute('cy', mousePosition.y);
       }
@@ -178,6 +176,26 @@ function addDragHandlersToSvg(evt) {
     }
   }
 
+  function toggleJsonExport() {
+    document.querySelector('.json_export').classList.toggle('visible');
+    let exportObject = {};
+    for (const node of svg.querySelectorAll('.node')) {
+      exportObject[node.id] = {canvas_position: {x: node.getCTM().e, y: node.getCTM().f}, type: node.dataset.type};
+      for (const configField of node.querySelectorAll('input')) {
+        exportObject[node.id][configField.dataset.field] = configField.value;
+      }
+      for (const inputPort of node.querySelectorAll('.input_port')) {
+        exportObject[node.id][inputPort.dataset.port] = []
+        for (const connectionId of inputPort.dataset.connections ? inputPort.dataset.connections.split(',') : []) {
+          let connection = document.getElementById(connectionId);
+          let portSelector = getPortSelector(inputPort);
+          exportObject[node.id][inputPort.dataset.port].push(connection.dataset.source === portSelector ? connection.dataset.target : connection.dataset.source);
+        }
+      }
+    }
+    document.querySelector('.json_export textarea').value = JSON.stringify(exportObject);
+  }
+
   function onHtml5Dragover(evt) {
     evt.preventDefault();
     evt.dataTransfer.dropEffect = "copy";
@@ -195,6 +213,11 @@ function addDragHandlersToSvg(evt) {
     }
   }
 
+  function onHtml5DragStartNodeTemplate(evt) {
+    evt.dataTransfer.setData("text/dragged-template", evt.target.id);
+    evt.dataTransfer.dropEffect = "copy";
+  }
+
   svg.addEventListener('mousedown', onMouseDown);
   svg.addEventListener('click', onClick);
   svg.addEventListener('mousemove', onMouseMove);
@@ -202,22 +225,15 @@ function addDragHandlersToSvg(evt) {
   svg.addEventListener('mouseleave', endDrag);
   svg.addEventListener("dragover", onHtml5Dragover);
   svg.addEventListener("drop", onHtml5Drop);
+
   draggedTargetPort = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   draggedTargetPort.setAttribute('data-dx', '0');
   draggedTargetPort.id = 'dragged_port';
   svg.appendChild(draggedTargetPort);
-}
 
-window.addEventListener('DOMContentLoaded', () => {
-  function onDragStartNodeTemplate(evt) {
-    evt.dataTransfer.setData("text/dragged-template", evt.target.id);
-    evt.dataTransfer.dropEffect = "copy";
-  }
-
-  let currentId = 0;
   for (const nodeTemplate of document.querySelectorAll(".node_overview li")) {
-    nodeTemplate.id = "nodeTemplate" + currentId;
-    currentId = currentId + 1;
-    nodeTemplate.addEventListener("dragstart", onDragStartNodeTemplate);
+    nodeTemplate.addEventListener("dragstart", onHtml5DragStartNodeTemplate);
   }
+
+  document.querySelector('button').addEventListener('click', toggleJsonExport);
 });

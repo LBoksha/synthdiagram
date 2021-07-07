@@ -8,7 +8,7 @@ v	2. Blokken op de canvas moeten versleept kunnen worden
 v	3. Blokken moeten 'ports' hebben die op elkaar aangesloten kunnen worden
 v		3a. Verbindingen tussen ports moeten verwijderd kunnen worden
 v	4. Blokken moeten tekst en editbare tekstvelden kunnen bevatten
-	5. Een JSON exportmogelijkheid
+v	5. Een JSON exportmogelijkheid
 
 Begin: whoops, ik weet helemaal geen drol meer over HTML. Wat de fuck is HTML 5? Is dat standaard? Zijn features als drag&drop uberhaupt geschikt
 om dingen als het verslepen van SVG-elementen te implementeren?
@@ -27,3 +27,4 @@ Todo's:
 	1. de drop als je een element op de canvas plaatst dumpt 'm met de linkerbovenhoek waar je je muis hebt, maar de preview heeft een offset
 tenopzichte van de cursor. Dat kan mooier.
 	2. Automatische generation van nodes in de template bar?
+	3. Ben bijna bang om het te zeggen, maar... JSON import?

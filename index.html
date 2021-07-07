@@ -3,26 +3,26 @@
   <head>
     <meta charset="utf-8">
     <link href="styles/style.css" rel="stylesheet">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-
     <title>SVG HTML & JavaScript Test</title>
   </head>
   <body>
     <script src="scripts/main.js"></script>
     <header><h1>SVG editor thing</h1></header>
-    <nav><p>Buttons go here I guess</p></nav>
-
+    <nav><p><button>Show JSON</button></p></nav>
     <main>
       <section>
-        <svg class="synth canvas" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 2048 1536" width="2048" height="1536" onload="addDragHandlersToSvg(evt)">
+        <svg class="synth canvas" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 2048 1536" width="2048" height="1536">
         </svg>
       </section>
+      <section class="json_export">
+        <textarea></textarea>
+      </section>
       <aside class="node_overview"><ul>
-        <li draggable="true"><svg class="synth" xmlns="http://www.w3.org/2000/svg" viewBox="-6.5 -6.5 108 76" width="108" height="76">
-          <g class="draggable closeable">
+        <li draggable="true" id="sinewave"><svg class="synth" xmlns="http://www.w3.org/2000/svg" viewBox="-6.5 -6.5 108 76" width="108" height="76">
+          <g class="draggable closeable node" data-type="sinewave">
             <rect x="4" y="4" width="96" height="64" style="fill:#000000;fill-opacity:0.4"/>
             <rect x="0" y="0" width="96" height="64" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
             <g class="drag_handle">
@@ -34,11 +34,11 @@
             <circle class="output_port output1" data-port="output1" data-connections="" cx="96" cy="40" data-dx="50" r="4" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
             <text x="8" y="44">phase</text>
             <text x="40" y="28">Frequency</text>
-            <foreignObject x="40" y="32" width="44" height="16"><input xmlns="http://www.w3.org/1999/xhtml" type="text" value="440"></foreignObject>
+            <foreignObject x="40" y="32" width="44" height="16"><input xmlns="http://www.w3.org/1999/xhtml" type="text" value="440" data-field="frequency"></foreignObject>
           </g>
         </svg></li>
-        <li draggable="true"><svg class="synth" xmlns="http://www.w3.org/2000/svg" viewBox="-6.5 -6.5 108 76" width="108" height="76">
-          <g class="draggable closeable">
+        <li draggable="true" id="linear"><svg class="synth" xmlns="http://www.w3.org/2000/svg" viewBox="-6.5 -6.5 108 76" width="108" height="76">
+          <g class="draggable closeable node" data-type="linear">
             <rect x="4" y="4" width="96" height="64" style="fill:#000000;fill-opacity:0.4"/>
             <rect x="0" y="0" width="96" height="64" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
             <g class="drag_handle">
@@ -49,12 +49,11 @@
             <circle class="input_port input1" data-port="input1"  data-connections="" cx="0" cy="40" data-dx="-50" r="4" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
             <circle class="output_port output1" data-port="output1"  data-connections="" cx="96" cy="40" data-dx="50" r="4" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
             <text x="8" y="44">phase</text>
-            <text x="40" y="28">Frequency</text>
-            <foreignObject x="40" y="32" width="44" height="16"><input xmlns="http://www.w3.org/1999/xhtml" type="text" value="440"></foreignObject>
+            <text x="40" y="28">Angle</text>
+            <foreignObject x="40" y="32" width="44" height="16"><input xmlns="http://www.w3.org/1999/xhtml" type="text" value="10" data-field="angle"></foreignObject>
           </g>
         </svg></li>
       </ul></aside>
     </main>
-
   </body>
 </html>
