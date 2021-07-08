@@ -24,7 +24,7 @@ Zelfs als je de stijl expliciet geeft hoeft een browser er nog geen gehoor aan t
 browsers wel het veranderen tekstgrootte, lettertype en breedte van de input (de enige opties die ik hier nodig heb)
 
 Todo's:
-	1. de drop als je een element op de canvas plaatst dumpt 'm met de linkerbovenhoek waar je je muis hebt, maar de preview heeft een offset
+v	1. de drop als je een element op de canvas plaatst dumpt 'm met de linkerbovenhoek waar je je muis hebt, maar de preview heeft een offset
 tenopzichte van de cursor. Dat kan mooier.
 	2. Automatische generation van nodes in de template bar?
 v	3. Ben bijna bang om het te zeggen, maar... JSON import?

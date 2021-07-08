@@ -16,12 +16,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
 
   function startDrag(evt) {
     draggedElement = evt.target.closest('.drag_handle').closest('.draggable');  // A drag_handle must be nested in a draggable
-    let mousePosition = convertToDiagramCoordinates(evt.clientX, evt.clientY, diagram.getScreenCTM());
-    let draggablePosition = {x: draggedElement.getCTM().e, y: draggedElement.getCTM().f};
-    draggedOffsetInDiagramCoordinates = {
-      x: draggablePosition.x - mousePosition.x,
-      y: draggablePosition.y - mousePosition.y,
-    };
+    draggedOffsetInDiagramCoordinates = convertToDiagramCoordinates(evt.clientX, evt.clientY, draggedElement.getScreenCTM());
   }
 
   function addNameToSetAttribute(target, attributeName, addedName) {  // like DOMTokenList.add
@@ -112,7 +107,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     let mousePosition = convertToDiagramCoordinates(evt.clientX, evt.clientY, diagram.getScreenCTM());
     if (draggedElement) {
       evt.preventDefault();
-      setNodePosition(draggedElement, mousePosition.x + draggedOffsetInDiagramCoordinates.x, mousePosition.y + draggedOffsetInDiagramCoordinates.y);
+      setNodePosition(draggedElement, mousePosition.x - draggedOffsetInDiagramCoordinates.x, mousePosition.y - draggedOffsetInDiagramCoordinates.y);
     } else if (draggedConnection) {
       evt.preventDefault();
       if (portsAreCompatible(document.querySelector(draggedConnection.dataset.source), evt.target)) {
@@ -182,6 +177,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
   function onHtml5DragStartFromNodeTemplate(evt) {
     evt.dataTransfer.setData("text/dragged-template", evt.target.id);
     evt.dataTransfer.dropEffect = "copy";
+    draggedOffsetInDiagramCoordinates = convertToDiagramCoordinates(evt.clientX, evt.clientY, evt.target.querySelector('.draggable').getScreenCTM());
   }
 
   function onHtml5DragoverOnDiagram(evt) {
@@ -201,7 +197,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     evt.preventDefault();
     if (evt.dataTransfer.getData("text/dragged-template")) {
       let newNodePosition = convertToDiagramCoordinates(evt.clientX, evt.clientY, diagram.getScreenCTM());
-      createNode(evt.dataTransfer.getData("text/dragged-template"), newNodePosition.x + 0.5, newNodePosition.y + 0.5, diagram);
+      createNode(evt.dataTransfer.getData("text/dragged-template"), newNodePosition.x + 0.5 - draggedOffsetInDiagramCoordinates.x, newNodePosition.y + 0.5 - draggedOffsetInDiagramCoordinates.y, diagram);
     }
   }
 
