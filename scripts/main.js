@@ -242,6 +242,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     diagram.parentNode.insertBefore(shadowDiagram, diagram);
     diagram.parentNode.removeChild(diagram);
     diagram = shadowDiagram;
+    diagram.insertBefore(draggedTargetPort, diagram.firstChild);
     for (const connection of diagram.querySelectorAll('.connection')) {
       updateConnectionPath(connection);
     }
