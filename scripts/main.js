@@ -31,7 +31,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     target.setAttribute(attributeName, [...tempSet].join());
   }
 
-  function makeNewConnection(connectionId, sourcePortSelector, targetPortSelector) {  // Make a new connection; update port data if it's between nodes
+  function makeNewConnection(connectionId, sourcePortSelector, targetPortSelector, baseDiagram) {  // Make a new connection; update port data if it's between nodes
     let newConnection = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     newConnection.setAttribute('id', connectionId);
     newConnection.dataset.source = sourcePortSelector;
@@ -39,11 +39,11 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     newConnection.classList.add('connection');
     let newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     newConnection.appendChild(newPath);
-    diagram.insertBefore(newConnection, diagram.firstChild);
+    baseDiagram.insertBefore(newConnection, baseDiagram.firstChild);
     if (targetPortSelector !== '#dragged_port') {  // This is a connection between nodes
-      let sourcePort = document.querySelector(sourcePortSelector);
+      let sourcePort = baseDiagram.querySelector(sourcePortSelector);
       addNameToSetAttribute(sourcePort, 'data-connections', connectionId);
-      let targetPort = document.querySelector(targetPortSelector);
+      let targetPort = baseDiagram.querySelector(targetPortSelector);
       addNameToSetAttribute(targetPort, 'data-connections', connectionId);
       newConnection.appendChild(newPath.cloneNode(false));
       newPath.setAttribute('style', 'stroke-opacity:0;stroke-width:10');  // See-through element to make hovering easier
@@ -56,12 +56,12 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     return newConnection;
   }
 
-  function getPortSelector(port) {  // Only works for port that are part of a node
-    return '#' + port.closest('.draggable').id + ' .' + port.dataset.port;
+  function getPortSelector(port) {  // Only works for ports that are part of a node
+    return `#${port.closest('.draggable').id} .${port.dataset.port}`;
   }
 
   function startConnectionDrag(evt) {
-    draggedConnection = makeNewConnection('dragged_connection', getPortSelector(evt.target), '#dragged_port');
+    draggedConnection = makeNewConnection('dragged_connection', getPortSelector(evt.target), '#dragged_port', diagram);
   }
 
   function onMouseDownOnDiagram(evt) {  // Check if the user wants to drag something around and, if yes, set it up
@@ -94,7 +94,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
   }
 
   function setNodePosition(node, newPositionX, newPositionY) {  // Sets the transform of a node's SVG group
-    node.setAttributeNS(null, "transform", "translate(" + newPositionX + "," + newPositionY + ")");
+    node.setAttributeNS(null, "transform", `translate(${newPositionX},${newPositionY})`);
     for (const port of node.querySelectorAll(".input_port, .output_port")) {
       let portConnectionIds = port.dataset.connections ? port.dataset.connections.split(',') : [];
       for (const connectionId of portConnectionIds) {
@@ -155,7 +155,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     if (draggedConnection) {
       let sourcePort = document.querySelector(draggedConnection.dataset.source);
       if (portsAreCompatible(sourcePort, evt.target)) {
-        updateConnectionPath(makeNewConnection("connection" + (nextId++), draggedConnection.dataset.source, getPortSelector(evt.target)));
+        updateConnectionPath(makeNewConnection(`connection${nextId++}`, draggedConnection.dataset.source, getPortSelector(evt.target), diagram));
       }
       diagram.removeChild(draggedConnection);
       draggedConnection = null;
@@ -189,20 +189,24 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
     evt.dataTransfer.dropEffect = "copy";
   }
 
+  function createNode(templateId, newNodeX, newNodeY, baseDiagram) {
+    let draggedNodeCopy = document.getElementById(templateId).querySelector('.draggable').cloneNode(true);
+    draggedNodeCopy.setAttributeNS(null, "transform", `translate(${newNodeX},${newNodeY})`);
+    draggedNodeCopy.id = `node${nextId++}`;
+    baseDiagram.appendChild(draggedNodeCopy);
+    return draggedNodeCopy;
+  }
+
   function onHtml5DropOnDiagram(evt) {
     evt.preventDefault();
-    let templateId = evt.dataTransfer.getData("text/dragged-template");
-    if (templateId) {
-      let draggedNodeCopy = document.getElementById(templateId).querySelector('.draggable').cloneNode(true);
-      let mousePosition = convertToDiagramCoordinates(evt.clientX, evt.clientY, diagram.getScreenCTM());
-      draggedNodeCopy.setAttributeNS(null, "transform", "translate(" + (mousePosition.x + 0.5) + "," + (mousePosition.y + 0.5) + ")");
-      draggedNodeCopy.id = "node" + (nextId++);
-      diagram.appendChild(draggedNodeCopy);
+    if (evt.dataTransfer.getData("text/dragged-template")) {
+      let newNodePosition = convertToDiagramCoordinates(evt.clientX, evt.clientY, diagram.getScreenCTM());
+      createNode(evt.dataTransfer.getData("text/dragged-template"), newNodePosition.x + 0.5, newNodePosition.y + 0.5, diagram);
     }
   }
 
   function updateAndToggleJsonExport() {
-    document.querySelector('.json_export').classList.toggle('visible');
+    for (const exportElement of document.querySelectorAll('.json_export')) {exportElement.classList.toggle('visible');}
     let exportObject = {};
     for (const node of diagram.querySelectorAll('.node')) {
       exportObject[node.id] = {diagram_position: {x: node.getCTM().e, y: node.getCTM().f}, type: node.dataset.type};
@@ -214,24 +218,51 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
         for (const connectionId of inputPort.dataset.connections ? inputPort.dataset.connections.split(',') : []) {
           let connection = document.getElementById(connectionId);
           let portSelector = getPortSelector(inputPort);
-          exportObject[node.id][inputPort.dataset.port].push(connection.dataset.source === portSelector ? connection.dataset.target : connection.dataset.source);
+          let outputPort = document.querySelector(connection.dataset.source === portSelector ? connection.dataset.target : connection.dataset.source);
+          exportObject[node.id][inputPort.dataset.port].push({node: outputPort.closest('.draggable').id, port: outputPort.dataset.port});
         }
       }
     }
     document.querySelector('.json_export textarea').value = JSON.stringify(exportObject);
   }
 
-  diagram.addEventListener('mousedown', onMouseDownOnDiagram);
-  diagram.addEventListener('mousemove', onMouseMoveOnDiagram);
-  diagram.addEventListener('mouseup', onMouseUpOnDiagram);
-  diagram.addEventListener('mouseleave', onMouseUpOnDiagram);  // We can't check for mouseup events when the mouse is not on the diagram, so leaving is considered letting go of the button
-  diagram.addEventListener('click', onClickOnDiagram);
+  function importFromJson() {
+    let data = JSON.parse(document.querySelector('.json_export textarea').value);
+    let idMap = {};  // Maps ID in the JSON to the newly created node
+    let shadowDiagram = document.querySelector('.synth.diagram').cloneNode(false);
+    for (const [savedId, savedData] of Object.entries(data)) {
+      idMap[savedId] = createNode(savedData.type, savedData.diagram_position.x, savedData.diagram_position.y, shadowDiagram);
+      for (const configField of idMap[savedId].querySelectorAll('input')) {
+        configField.value = savedData[configField.dataset.field];
+      }
+    }
+    for (const [savedId, savedData] of Object.entries(data)) {
+      for (const inputPort of idMap[savedId].querySelectorAll('.input_port')) {
+        for (const outputPortData of savedData[inputPort.dataset.port]) {
+          makeNewConnection(`connection${nextId++}`, `#${idMap[outputPortData.node].id} .${outputPortData.port}`, getPortSelector(inputPort), shadowDiagram);
+        }
+      }
+    }
+    diagram.parentNode.insertBefore(shadowDiagram, diagram);
+    diagram.parentNode.removeChild(diagram);
+    diagram = shadowDiagram;
+    for (const connection of diagram.querySelectorAll('.connection')) {
+      updateConnectionPath(connection);
+    }
+  }
+
+  diagram.parentNode.addEventListener('mousedown', onMouseDownOnDiagram);
+  diagram.parentNode.addEventListener('mousemove', onMouseMoveOnDiagram);
+  diagram.parentNode.addEventListener('mouseup', onMouseUpOnDiagram);
+  diagram.parentNode.addEventListener('mouseleave', onMouseUpOnDiagram);  // We can't check for mouseup events when the mouse is not on the diagram, so leaving is considered letting go of the button
+  diagram.parentNode.addEventListener('click', onClickOnDiagram);
 
   for (const nodeTemplate of document.querySelectorAll(".node_overview li")) {
     nodeTemplate.addEventListener("dragstart", onHtml5DragStartFromNodeTemplate);
   }
-  diagram.addEventListener("dragover", onHtml5DragoverOnDiagram);
-  diagram.addEventListener("drop", onHtml5DropOnDiagram);
+  diagram.parentNode.addEventListener("dragover", onHtml5DragoverOnDiagram);
+  diagram.parentNode.addEventListener("drop", onHtml5DropOnDiagram);
 
-  document.querySelector('button').addEventListener('click', updateAndToggleJsonExport);
+  document.querySelector('#show_json').addEventListener('click', updateAndToggleJsonExport);
+  document.querySelector('#import_json').addEventListener('click', importFromJson);
 });

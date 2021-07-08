@@ -52,10 +52,13 @@ p, li {
 
 section.json_export {
   overflow: hidden;
+}
+
+.json_export {
   visibility: collapse;
 }
 
-section.json_export.visible {
+.json_export.visible {
   visibility: unset;
 }
 

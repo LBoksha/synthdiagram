@@ -27,6 +27,6 @@ Todo's:
 	1. de drop als je een element op de canvas plaatst dumpt 'm met de linkerbovenhoek waar je je muis hebt, maar de preview heeft een offset
 tenopzichte van de cursor. Dat kan mooier.
 	2. Automatische generation van nodes in de template bar?
-	3. Ben bijna bang om het te zeggen, maar... JSON import?
+v	3. Ben bijna bang om het te zeggen, maar... JSON import?
 
 Note: hierboven heb ik het over een "canvas". Da's verwarrend want ook een HTML element (voor raster graphics). In de code heet dit nu het 'diagram'.
