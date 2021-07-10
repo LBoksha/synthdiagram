@@ -21,39 +21,8 @@
         <textarea></textarea>
       </section>
       <aside class="node_overview"><ul>
-        <li draggable="true" id="sinewave"><svg class="synth" xmlns="http://www.w3.org/2000/svg" viewBox="-6.5 -6.5 108 76" width="108" height="76">
-          <g class="draggable closeable node" data-type="sinewave">
-            <rect x="4" y="4" width="96" height="64" style="fill:#000000;fill-opacity:0.4"/>
-            <rect x="0" y="0" width="96" height="64" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-            <g class="drag_handle">
-              <rect x="0" y="0" height="16" width="96" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-              <text x="4" y="12">Sinewave</text>
-              <text x="90" y="12" class="close_button disable_dragging">x</text>
-            </g>
-            <circle class="input_port input1" data-port="input1" data-connections="" cx="0" cy="40" data-dx="-50" r="4" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-            <circle class="output_port output1" data-port="output1" data-connections="" cx="96" cy="40" data-dx="50" r="4" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-            <text x="8" y="44">phase</text>
-            <text x="40" y="28">Frequency</text>
-            <foreignObject x="40" y="32" width="44" height="16"><input xmlns="http://www.w3.org/1999/xhtml" type="text" value="440" data-field="frequency"></foreignObject>
-          </g>
-        </svg></li>
-        <li draggable="true" id="linear"><svg class="synth" xmlns="http://www.w3.org/2000/svg" viewBox="-6.5 -6.5 108 76" width="108" height="76">
-          <g class="draggable closeable node" data-type="linear">
-            <rect x="4" y="4" width="96" height="64" style="fill:#000000;fill-opacity:0.4"/>
-            <rect x="0" y="0" width="96" height="64" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-            <g class="drag_handle">
-              <rect x="0" y="0" height="16" width="96" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-              <text x="4" y="12">Linear</text>
-              <text x="90" y="12" class="close_button disable_dragging">x</text>
-            </g>
-            <circle class="input_port input1" data-port="input1"  data-connections="" cx="0" cy="40" data-dx="-50" r="4" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-            <circle class="output_port output1" data-port="output1"  data-connections="" cx="96" cy="40" data-dx="50" r="4" style="fill:#ffffff;stroke:#000000;stroke-width:1"/>
-            <text x="8" y="44">phase</text>
-            <text x="40" y="28">Angle</text>
-            <foreignObject x="40" y="32" width="44" height="16"><input xmlns="http://www.w3.org/1999/xhtml" type="text" value="10" data-field="angle"></foreignObject>
-          </g>
-        </svg></li>
       </ul></aside>
     </main>
+    <script src="scripts/synthesizer_node_templates.js"></script>
   </body>
 </html>

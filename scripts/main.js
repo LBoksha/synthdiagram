@@ -70,10 +70,10 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
   }
 
   function updateConnectionPath(connection) {
-    let sourcePort = document.querySelector(connection.dataset.source);
+    let sourcePort = connection.closest('svg').querySelector(connection.dataset.source);
     let sourcePosition = convertToDiagramCoordinates(Number(sourcePort.getAttribute('cx')), Number(sourcePort.getAttribute('cy')), sourcePort.getCTM().inverse());
     let sourceDx = Number(sourcePort.dataset.dx);
-    let targetPort = document.querySelector(connection.dataset.target);
+    let targetPort = connection.closest('svg').querySelector(connection.dataset.target);
     let targetPosition = convertToDiagramCoordinates(Number(targetPort.getAttribute('cx')), Number(targetPort.getAttribute('cy')), targetPort.getCTM().inverse());
     let targetDx = Number(targetPort.dataset.dx);
     for (const pathElement of connection.querySelectorAll('path')) {
@@ -225,7 +225,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
   function importFromJson() {
     let data = JSON.parse(document.querySelector('.json_export textarea').value);
     let idMap = {};  // Maps ID in the JSON to the newly created node
-    let shadowDiagram = document.querySelector('.synth.diagram').cloneNode(false);
+    let shadowDiagram = document.querySelector('.synth.diagram').cloneNode(false);  // We'll build up the nodes here so the main diagram is untouched if import fails
     for (const [savedId, savedData] of Object.entries(data)) {
       idMap[savedId] = createNode(savedData.type, savedData.diagram_position.x, savedData.diagram_position.y, shadowDiagram);
       for (const configField of idMap[savedId].querySelectorAll('input')) {
@@ -239,8 +239,7 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
         }
       }
     }
-    diagram.parentNode.insertBefore(shadowDiagram, diagram);
-    diagram.parentNode.removeChild(diagram);
+    diagram.replaceWith(shadowDiagram);  // Import was a success: swap the shadowDiagram with the main diagram
     diagram = shadowDiagram;
     diagram.insertBefore(draggedTargetPort, diagram.firstChild);
     for (const connection of diagram.querySelectorAll('.connection')) {
