@@ -28,12 +28,11 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
 
   function makeNewConnection(connectionId, sourcePortSelector, targetPortSelector, baseDiagram) {  // Make a new connection; update port data if it's between nodes
     let newConnection = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    newConnection.setAttribute('id', connectionId);
+    newConnection.id = connectionId;
     newConnection.dataset.source = sourcePortSelector;
     newConnection.dataset.target = targetPortSelector;
     newConnection.classList.add('connection');
-    let newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    newConnection.appendChild(newPath);
+    let newPath = newConnection.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
     baseDiagram.insertBefore(newConnection, baseDiagram.firstChild);
     if (targetPortSelector !== '#dragged_port') {  // This is a connection between nodes
       let sourcePort = baseDiagram.querySelector(sourcePortSelector);
@@ -42,11 +41,10 @@ window.addEventListener('DOMContentLoaded', function addHandlers() {
       addNameToSetAttribute(targetPort, 'data-connections', connectionId);
       newConnection.appendChild(newPath.cloneNode(false));
       newPath.setAttribute('style', 'stroke-opacity:0;stroke-width:10');  // See-through element to make hovering easier
-      let newCloseButton = newConnection.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'text'));
-      newCloseButton.appendChild(document.createTextNode('❌'));
+      let newCloseButton = newConnection.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'text'))
+      newCloseButton.textContent = '❌';
       newCloseButton.classList.add('close_button');
-      newConnection.classList.add('live_connection');
-      newConnection.classList.add('closeable');
+      newConnection.classList.add('live_connection', 'closeable');
     }
     return newConnection;
   }

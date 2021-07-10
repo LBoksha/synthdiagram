@@ -6,7 +6,9 @@
     [['sinwave', 'Sinewave'], [['single', 'phase', 'phase']], ['output'], [['frequency', 'Frequency', 440]]],
     [['linear', 'Linear'], [['single', 'phase', 'phase']], ['output'], [['angle', 'Angle', 10]]],
     [['sawtooth', 'Sawtooth'], [['single', 'phase', 'phase']], ['output'], [['frequency', 'Frequency', 440], ['alpha', 'Alpha', 0.1]]],
+    [['gauss', 'Gaussian'], [], ['output'], [['center', 'center', 440.0], ['d', 'σ', 20.0]]],
     [['fft', 'FFT'], [['single', 'ampl', 'ampl.'], ['single', 'phase', 'phase']], ['output'], [['length', 'Length', 1.0]]],
+    [['output', 'Output'], [['single', 'input', 'input']], [], [['length', 'Length', 1.0]]],
   ];
 
   function setAttributes(e, attributes) {
