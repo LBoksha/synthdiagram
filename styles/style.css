@@ -49,11 +49,11 @@ section.json_export {
 }
 
 .json_export {
-  visibility: collapse;
+  display: none;
 }
 
 .json_export.visible {
-  visibility: unset;
+  display: unset;
 }
 
 .json_export textarea {
